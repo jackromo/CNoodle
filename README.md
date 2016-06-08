@@ -8,4 +8,4 @@ This software is licensed under the [MIT license (MIT)](LICENSE).
 
 ## Requirements
 
-This software uses OpenGL for graphics.
+This software uses OpenGL and PortAudio.
