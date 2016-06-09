@@ -17,13 +17,16 @@ struct room;
 struct sprite;
 struct sound;
 struct hitbox;
+struct update_command;
 
+// TODO: remove t_
 typedef struct game_data t_game_data;
 typedef struct entity t_entity;
 typedef struct room t_room;
 typedef struct sprite t_sprite;
 typedef struct sound t_sound;
 typedef struct hitbox t_hitbox;
+typedef struct update_command t_update_command;
 
 /*
  * game_data: Contains all data about a particular game.
@@ -54,11 +57,11 @@ struct room {
 
 /*
  * entity: An atomic element of a room that independently updates.
- * Has a unique ID, an update function that is called each update of the game, and a position.
+ * Has a unique ID, an update_self function that is called each update of the game, and a position.
  */
 struct entity {
     int id; // Unique identifier for an entity.
-    t_entity (*update)(t_room*, t_entity*);
+    t_entity (*update_self)(t_room*, t_entity*);
     t_sprite spr;
     t_sound* sounds;
 };
@@ -101,10 +104,64 @@ struct hitbox {
 };
 
 /*
+ * update_command: A request to alter the game's global state.
+ * Returned by entities upon running their update_self() functions, and parsed by the global update().
+ * Will update variables or flags in game_data.
+ * Contains its command_type and a command-specific list of values.
+ */
+
+// Type of command.
+enum command_type {
+    ALTER_ENTITY,
+    ADD_ENTITY,
+    REM_ENTITY,
+    ALTER_LEVEL,
+    PLAY_SND,
+    PAUSE_SND,
+    END_SND
+};
+
+// All data types for details of specific commands.
+struct alter_entity_command {
+    //
+};
+struct add_entity_command {
+    //
+};
+struct rem_entity_command {
+    //
+};
+struct alter_level_command{
+    //
+};
+struct play_sound_command{
+    //
+};
+struct pause_sound_command{
+    //
+};
+struct end_sound_command{
+    //
+};
+
+struct update_command {
+    enum command_type type;
+    union {
+        struct alter_entity_command alter_ent;
+        struct add_entity_command add_ent;
+        struct rem_entity_command rem_ent;
+        struct alter_level_command alter_lev;
+        struct play_sound_command play_snd;
+        struct pause_sound_command pause_snd;
+        struct end_sound_command end_snd;
+    } data;
+};
+
+/*
  * update: Update the game state by one iteration.
  *
  * Is distinctly separate from rendering, as it merely alters the game's internal data.
- * Works by getting the current room's contained entities, then calling their update() functions.
+ * Works by getting the current room's contained entities, then calling their update_self() functions.
  * Each function returns an update_command struct, containing a command to be executed on game_data.
  * These commands are gathered and each executed by command_dispatcher functions, which each take
  * a certain type of update_command and the game_data*, returning nothing and updating the game_data.
