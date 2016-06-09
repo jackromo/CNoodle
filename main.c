@@ -61,7 +61,7 @@ struct room {
  */
 struct entity {
     int id; // Unique identifier for an entity.
-    t_entity (*update_self)(t_room*, t_entity*);
+    t_update_command (*update_self)(t_room*, t_entity*);
     t_sprite spr;
     t_sound* sounds;
 };
@@ -115,10 +115,12 @@ enum command_type {
     ALTER_ENTITY,
     ADD_ENTITY,
     REM_ENTITY,
-    ALTER_LEVEL,
+    ALTER_ROOM,
+    NEXT_ROOM,
     PLAY_SND,
     PAUSE_SND,
-    END_SND
+    END_SND,
+    QUIT
 };
 
 // All data types for details of specific commands.
@@ -131,16 +133,22 @@ struct add_entity_command {
 struct rem_entity_command {
     //
 };
-struct alter_level_command{
+struct alter_room_command {
     //
 };
-struct play_sound_command{
+struct next_room_command {
     //
 };
-struct pause_sound_command{
+struct play_sound_command {
     //
 };
-struct end_sound_command{
+struct pause_sound_command {
+    //
+};
+struct end_sound_command {
+    //
+};
+struct quit_command {
     //
 };
 
@@ -150,10 +158,12 @@ struct update_command {
         struct alter_entity_command alter_ent;
         struct add_entity_command add_ent;
         struct rem_entity_command rem_ent;
-        struct alter_level_command alter_lev;
+        struct alter_room_command alter_room;
+        struct next_room_command next_room;
         struct play_sound_command play_snd;
         struct pause_sound_command pause_snd;
         struct end_sound_command end_snd;
+        struct quit_command quit;
     } data;
 };
 
@@ -175,7 +185,7 @@ void update(t_game_data* data) {
 /*
  * render: Render the game state's next frame.
  *
- * Reads sprites of all entities in current level, updates their subimage if needed, and displays all images.
+ * Reads sprites of all entities in current room, updates their subimage if needed, and displays all images.
  *
  * data (t_game_data *): Pointer to data about game to be updated.
  */
