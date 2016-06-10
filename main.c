@@ -51,6 +51,7 @@ typedef struct update_command t_update_command;
  */
 struct room {
     t_entity* entities; // All entities inside of room
+    int num_entities;
     int width;
     int height;
 };
@@ -178,8 +179,34 @@ struct update_command {
  *
  * data (t_game_data *): Pointer to data about game to be updated.
  */
-void update(t_game_data* data) {
-    // TODO
+int update(t_game_data* data) {
+    t_room current_room = (*data).current_room;
+    t_update_command commands[current_room.num_entities];   // FIXME: memory allocation, too slow
+    // Get all update commands
+    // TODO: multithreading
+    for(int i = 0; i < current_room.num_entities; i++) {
+        t_entity current_entity = (*data).entities[i];
+        commands[i] = current_entity.update_self(&current_room, &current_entity);
+    }
+    // Parse all commands
+    // (must be done in a separate loop bc. may modify other entities before they update)
+    // TODO: multithreading
+    for(int i = current_room.num_entities - 1; i > 0; i--) {
+        t_update_command command = commands[i];
+        switch(command.type) {
+            case ALTER_ENTITY: break;
+            case ADD_ENTITY: break;
+            case REM_ENTITY: break;
+            case ALTER_ROOM: break;
+            case NEXT_ROOM: break;
+            case PLAY_SND: break;
+            case PAUSE_SND: break;
+            case END_SND: break;
+            case QUIT: break;
+            default: break;
+        }
+    }
+    return 0;
 }
 
 /*
