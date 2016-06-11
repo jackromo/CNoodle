@@ -7,7 +7,6 @@
  */
 
 
-#include <stdio.h>
 #include <GL/gl.h>
 #include <portaudio.h>
 
@@ -16,7 +15,6 @@ struct entity;
 struct room;
 struct sprite;
 struct sound;
-struct hitbox;
 struct update_command;
 struct update_command_container;
 
@@ -26,7 +24,6 @@ typedef struct entity t_entity;
 typedef struct room t_room;
 typedef struct sprite t_sprite;
 typedef struct sound t_sound;
-typedef struct hitbox t_hitbox;
 typedef struct update_command t_update_command;
 typedef struct update_command_container t_update_command_container;
 
@@ -91,19 +88,6 @@ struct sprite {
 struct sound {
     char* snd_path;
     int volume;
-};
-
-/*
- * hitbox: A rectangular object that can collide with other hitboxes.
- * If a hitbox collides with another hitbox, the other hitbox is added to said hitbox's 'collided' array.
- * Contains its position, dimensions, and an array of hitboxes it is currently in contact with.
- */
-struct hitbox {
-    int x;
-    int y;
-    int width;
-    int height;
-    t_hitbox* collided;
 };
 
 /*
