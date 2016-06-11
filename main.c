@@ -65,8 +65,8 @@ struct room {
 struct entity {
     int id; // Unique identifier for an entity.
     t_update_command_container (*update_self)(t_room*, t_entity*);
-    t_sprite spr;
-    t_sound* sounds;
+    t_sprite current_spr;
+    void *ent_data; // can be used by entity, must be cast to a meaningful struct first
 };
 
 /*
