@@ -23,7 +23,7 @@ if(NOT OPENGL_FOUND)
     message(ERROR "OPENGL not found!")
 endif(NOT OPENGL_FOUND)
 
-set(SOURCE_FILES main.c)
+set(SOURCE_FILES main.c cnoodle.h)
 add_executable(cnoodle ${SOURCE_FILES})
 
 # Link with OpenGL
