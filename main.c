@@ -18,6 +18,7 @@ struct sprite;
 struct sound;
 struct hitbox;
 struct update_command;
+struct update_command_container;
 
 // TODO: remove t_
 typedef struct game_data t_game_data;
@@ -27,6 +28,7 @@ typedef struct sprite t_sprite;
 typedef struct sound t_sound;
 typedef struct hitbox t_hitbox;
 typedef struct update_command t_update_command;
+typedef struct update_command_container t_update_command_container;
 
 /*
  * game_data: Contains all data about a particular game.
@@ -62,7 +64,7 @@ struct room {
  */
 struct entity {
     int id; // Unique identifier for an entity.
-    t_update_command (*update_self)(t_room*, t_entity*);
+    t_update_command_container (*update_self)(t_room*, t_entity*);
     t_sprite spr;
     t_sound* sounds;
 };
@@ -168,42 +170,55 @@ struct update_command {
     } data;
 };
 
+
+/*
+ * update_command_container: Contains a series of update commands from a single entity.
+ */
+struct update_command_container {
+    int num_commands;
+    t_update_command* commands;
+};
+
 /*
  * update: Update the game state by one iteration.
  *
  * Is distinctly separate from rendering, as it merely alters the game's internal data.
  * Works by getting the current room's contained entities, then calling their update_self() functions.
- * Each function returns an update_command struct, containing a command to be executed on game_data.
+ * Each function returns an update_command_container struct, containing a set of commands to be executed on game_data.
  * These commands are gathered and each executed by command_dispatcher functions, which each take
  * a certain type of update_command and the game_data*, returning nothing and updating the game_data.
  *
  * data (t_game_data *): Pointer to data about game to be updated.
  */
 int update(t_game_data* data) {
-    t_room current_room = (*data).current_room;
-    t_update_command commands[current_room.num_entities];   // FIXME: memory allocation, too slow
+    t_room current_room = data->current_room;
+    t_update_command_container commands[current_room.num_entities];   // FIXME: memory allocation, too slow
     // Get all update commands
     // TODO: multithreading
     for(int i = 0; i < current_room.num_entities; i++) {
-        t_entity current_entity = (*data).entities[i];
+        t_entity current_entity = data->entities[i];
         commands[i] = current_entity.update_self(&current_room, &current_entity);
     }
     // Parse all commands
     // (must be done in a separate loop bc. may modify other entities before they update)
     // TODO: multithreading
     for(int i = current_room.num_entities - 1; i > 0; i--) {
-        t_update_command command = commands[i];
-        switch(command.type) {
-            case ALTER_ENTITY: break;
-            case ADD_ENTITY: break;
-            case REM_ENTITY: break;
-            case ALTER_ROOM: break;
-            case NEXT_ROOM: break;
-            case PLAY_SND: break;
-            case PAUSE_SND: break;
-            case END_SND: break;
-            case QUIT: break;
-            default: break;
+        t_update_command_container current_commands = commands[i];
+        for(int j = 0; j < current_commands.num_commands; j++) {
+            t_update_command command = current_commands.commands[j];
+            switch(command.type) {
+                // TODO: add command dispatcher function calls
+                case ALTER_ENTITY: break;
+                case ADD_ENTITY: break;
+                case REM_ENTITY: break;
+                case ALTER_ROOM: break;
+                case NEXT_ROOM: break;
+                case PLAY_SND: break;
+                case PAUSE_SND: break;
+                case END_SND: break;
+                case QUIT: break;
+                default: break;
+            }
         }
     }
     return 0;
