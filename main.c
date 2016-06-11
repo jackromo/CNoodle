@@ -16,10 +16,19 @@
  * Includes all rooms, sprites and sounds, screen size, current room, etc.
  * Is updated each frame by update().
  */
- struct game_data {
+struct game_data {
+    /*
+     * entities: Array of all entities in game.
+     * Only place where entities can be directly referenced.
+     * Must remain sorted by ID.
+     */
+    int num_entities;
     t_entity* entities;
+    int num_rooms;
     t_room* rooms;
+    int num_sprites;
     t_sprite* sprites;
+    int num_sounds;
     t_sound* sounds;
     int scr_width;
     int scr_height;
@@ -33,7 +42,7 @@
  * Coordinates are relative to the top-left corner of the room; entities can leave this area.
  */
 struct room {
-    t_entity* entities; // All entities inside of room
+    int* entity_ids; // IDs of all entities inside of room
     int num_entities;
     int width;
     int height;
@@ -47,6 +56,8 @@ struct entity {
     int id; // Unique identifier for an entity.
     t_update_command_container (*update_self)(t_room*, t_entity*);
     t_sprite current_spr;
+    int x;
+    int y;
     void *ent_data; // can be used by entity, must be cast to a meaningful struct first
 };
 
@@ -95,11 +106,16 @@ enum command_type {
 };
 
 // All data types for details of specific commands.
+enum alter_entity_attr {
+    CURRENT_SPR, X, Y, UPDATE_SELF, ENT_DATA
+};
 struct alter_entity_command {
-    //
+    int target_id;
+    t_entity model_ent; // Target entity is modified to be like this one
+    enum alter_entity_attr modified_attr;   // Attribute of target entity to modify
 };
 struct add_entity_command {
-    //
+    t_entity new_entity;    // Can have any ID, will be set upon creation to be highest existing ID + 1
 };
 struct rem_entity_command {
     //
@@ -161,14 +177,29 @@ int update(t_game_data* data) {
     t_room current_room = data->current_room;
     t_update_command_container commands[current_room.num_entities];   // FIXME: memory allocation, too slow
     // Get all update commands
-    // TODO: multithreading
+    // TODO: thread pool, currently takes O(n*log(n) + update_self_time) time
     for(int i = 0; i < current_room.num_entities; i++) {
-        t_entity current_entity = data->entities[i];
-        commands[i] = current_entity.update_self(&current_room, &current_entity);
+        int current_entity_id = current_room.entity_ids[i];
+        // Binary search for entity with ID
+        int j = data->num_entities / 2;
+        t_entity current_entity;
+        while(((float) j) / 2f >= 1) {
+            if(data->entities[j].id == current_entity_id) {
+                current_entity = data->entities[i];
+                break;
+            } else if(data->entities[j].id < current_entity_id) {
+                j += (j/2 < 1 ? 1 : j/2);
+            } else {
+                j -= (j/2 < 1 ? 1 : j/2);
+            }
+        }
+        if(data->entities[j].id == current_entity_id) { // If entity was found successfully, update it
+            commands[i] = current_entity.update_self(&current_room, &current_entity);
+        }
     }
     // Parse all commands
     // (must be done in a separate loop bc. may modify other entities before they update)
-    // TODO: multithreading
+    // TODO: multithreading with thread pool
     for(int i = current_room.num_entities - 1; i > 0; i--) {
         t_update_command_container current_commands = commands[i];
         for(int j = 0; j < current_commands.num_commands; j++) {
