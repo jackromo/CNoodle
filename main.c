@@ -57,25 +57,32 @@ int loop_update(t_game_data* data) {
             for (int j = 0; j < current_commands.num_commands; j++) {
                 t_update_command command = current_commands.commands[j];
                 switch (command.type) {
-                    // TODO: add command dispatcher function calls
                     case ALTER_ENTITY:
+                        cmd_alter_entity(data, command.data.alter_ent);
                         break;
                     case ADD_ENTITY:
+                        cmd_add_entity(data, command.data.add_ent);
                         break;
                     case REM_ENTITY:
+                        cmd_rem_entity(data, command.data.rem_ent);
                         break;
                     case ALTER_ROOM:
+                        cmd_alter_room(data, command.data.alter_room);
                         break;
                     case NEXT_ROOM:
+                        cmd_next_room(data, command.data.next_room);
                         break;
                     case PLAY_SND:
+                        cmd_play_sound(data, command.data.play_snd);
                         break;
                     case PAUSE_SND:
+                        cmd_pause_sound(data, command.data.pause_snd);
                         break;
                     case END_SND:
+                        cmd_end_sound(data, command.data.end_snd);
                         break;
                     case QUIT:
-                        // TODO: cleanup code
+                        cmd_quit(data, command.data.quit);
                         has_game_ended = true;
                         break;
                     default:

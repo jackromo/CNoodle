@@ -181,6 +181,17 @@ struct update_command_container {
 
 // Function declarations
 
+// All update command dispatcher functions
+void cmd_alter_entity(t_game_data*, struct alter_entity_command);
+void cmd_add_entity(t_game_data*, struct add_entity_command);
+void cmd_rem_entity(t_game_data*, struct rem_entity_command);
+void cmd_alter_room(t_game_data*, struct alter_room_command);
+void cmd_next_room(t_game_data*, struct next_room_command);
+void cmd_play_sound(t_game_data*, struct play_sound_command);
+void cmd_pause_sound(t_game_data*, struct pause_sound_command);
+void cmd_end_sound(t_game_data*, struct end_sound_command);
+void cmd_quit(t_game_data*, struct quit_command);
+
 int loop_update(t_game_data*);
 int loop_render(t_game_data*);
 int render(t_game_data*);
