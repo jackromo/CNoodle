@@ -6,8 +6,6 @@
  * Author: Jack Romo <sharrackor@gmail.com>
  */
 
-#include <GL/gl.h>
-#include <portaudio.h>
 #include <stdbool.h>
 #include "cnoodle.h"
 
@@ -106,9 +104,5 @@ int loop_render(t_game_data* data) {
     for(;;) {
         // TODO
     }
-    return 0;
-}
-
-int main() {
     return 0;
 }

@@ -6,6 +6,10 @@
  * Author: Jack Romo <sharrackor@gmail.com>
  */
 
+#include <GL/gl.h>
+#include <portaudio.h>
+#include <GL/gl.h>
+
 #ifndef CNOODLE_H
 #define CNOODLE_H
 
@@ -59,6 +63,7 @@ struct game_data {
  * Coordinates are relative to the top-left corner of the room; entities can leave this area.
  */
 struct room {
+    int room_id;
     int* entity_ids; // IDs of all entities inside of room
     int num_entities;
     int width;
@@ -98,6 +103,7 @@ struct sprite {
  * Contains a file path to a sound and a volume from 0 to a positive value.
  */
 struct sound {
+    int snd_id;
     char* snd_path;
     int volume;
 };
@@ -135,25 +141,33 @@ struct add_entity_command {
     t_entity new_entity;    // Can have any ID, will be set upon creation to be highest existing ID + 1
 };
 struct rem_entity_command {
-    //
+    int ent_id;     // ID of entity to remove
+};
+enum alter_room_attr {
+    ENTITIES, WIDTH, HEIGHT
 };
 struct alter_room_command {
-    //
+    int target_id;
+    t_room model_room;
+    enum alter_room_attr modified_attr;
 };
 struct next_room_command {
-    //
+    int next_room_id;
 };
 struct play_sound_command {
-    //
+    int sound_id;
 };
 struct pause_sound_command {
-    //
+    int sound_id;
 };
 struct end_sound_command {
-    //
+    int sound_id;
+};
+enum quit_status {
+    NORMAL, ERROR
 };
 struct quit_command {
-    //
+    enum quit_status status;
 };
 
 struct update_command {
