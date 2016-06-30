@@ -206,6 +206,9 @@ void cmd_pause_sound(t_game_data*, struct pause_sound_command);
 void cmd_end_sound(t_game_data*, struct end_sound_command);
 void cmd_quit(t_game_data*, struct quit_command);
 
+typedef int (*id_func)(void *);
+void* binary_search(void**, int*, int, int, id_func);
+
 int loop_update(t_game_data*);
 int loop_render(t_game_data*);
 int render(t_game_data*);

@@ -35,7 +35,7 @@ int loop_update(t_game_data* data) {
             t_entity current_entity;
             while (((float) j) / 2f >= 1) {
                 if (data->entities[j].id == current_entity_id) {
-                    current_entity = data->entities[i];
+                    current_entity = data->entities[j];
                     break;
                 } else if (data->entities[j].id < current_entity_id) {
                     j += (j / 2 < 1 ? 1 : j / 2);

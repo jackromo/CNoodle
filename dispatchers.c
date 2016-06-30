@@ -1,7 +1,9 @@
 /*
  * File: dispatchers.c
  *
- *  in CNoodle.
+ * All update command dispatcher functions.
+ * Must support multithreading, ie. must use game data only for reading
+ * then acquire a lock on desired struct to write to.
  *
  * Author: Jack Romo <sharrackor@gmail.com>
  */
@@ -10,7 +12,27 @@
 
 
 void cmd_alter_entity(t_game_data *data, struct alter_entity_command cmd) {
-    //
+    // TODO: binary search for desired entity
+    t_entity* target_entity;
+    switch(cmd.modified_attr) {
+        case CURRENT_SPR:
+            target_entity->current_spr = cmd.model_ent.current_spr;
+            break;
+        case X:
+            target_entity->x = cmd.model_ent.x;
+            break;
+        case Y:
+            target_entity->y = cmd.model_ent.y;
+            break;
+        case UPDATE_SELF:
+            target_entity->update_self = cmd.model_ent.update_self;
+            break;
+        case ENT_DATA:
+            target_entity->ent_data = cmd.model_ent.ent_data;
+            break;
+        default:
+            break;
+    }
 }
 
 void cmd_add_entity(t_game_data *data, struct add_entity_command cmd) {
