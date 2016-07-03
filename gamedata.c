@@ -201,94 +201,94 @@ t_game_data make_game_data(char* fname) {
     return data;
 }
 
-t_entity *get_entity(t_game_data data, int id) {
-    return (t_entity *) hashtable_get(data.entities, id);
+t_entity *get_entity(t_game_data *data, int id) {
+    return (t_entity *) hashtable_get(data->entities, id);
 }
 
-void add_entity(t_game_data data, t_entity entity) {
-    data.max_id = entity.id = data.max_id + 1;
-    data.num_entities++;
-    hashtable_add(data.entities, (void*) &entity, ENTITY);
+void add_entity(t_game_data *data, t_entity entity) {
+    data->max_id = entity.id = data->max_id + 1;
+    data->num_entities++;
+    hashtable_add(data->entities, (void*) &entity, ENTITY);
 }
 
-void del_entity(t_game_data data, int id) {
-    hashtable_del(data.entities, id);
-    data.num_entities--;
+void del_entity(t_game_data *data, int id) {
+    hashtable_del(data->entities, id);
+    data->num_entities--;
 }
 
-int *get_entity_ids(t_game_data data) {
-    return hashtable_get_ids(data.entities);
+int *get_entity_ids(t_game_data *data) {
+    return hashtable_get_ids(data->entities);
 }
 
-t_room *get_room(t_game_data data, int id) {
-    return (t_room *) hashtable_get(data.rooms, id);
+t_room *get_room(t_game_data *data, int id) {
+    return (t_room *) hashtable_get(data->rooms, id);
 }
 
-void add_room(t_game_data data, t_room room) {
-    data.max_id = room.room_id = data.max_id + 1;
-    data.num_rooms++;
-    hashtable_add(data.rooms, (void*) &room, ROOM);
+void add_room(t_game_data *data, t_room room) {
+    data->max_id = room.room_id = data->max_id + 1;
+    data->num_rooms++;
+    hashtable_add(data->rooms, (void*) &room, ROOM);
 }
 
-void del_room(t_game_data data, int id) {
-    hashtable_del(data.rooms, id);
-    data.num_rooms--;
+void del_room(t_game_data *data, int id) {
+    hashtable_del(data->rooms, id);
+    data->num_rooms--;
 }
 
-int *get_room_ids(t_game_data data) {
-    return hashtable_get_ids(data.rooms);
+int *get_room_ids(t_game_data *data) {
+    return hashtable_get_ids(data->rooms);
 }
 
-t_sprite *get_sprite(t_game_data data, int id) {
-    return (t_sprite *) hashtable_get(data.sprites, id);
+t_sprite *get_sprite(t_game_data *data, int id) {
+    return (t_sprite *) hashtable_get(data->sprites, id);
 }
 
-void add_sprite(t_game_data data, t_sprite sprite) {
-    data.max_id = sprite.spr_id = data.max_id + 1;
-    data.num_sprites++;
-    hashtable_add(data.sprites, (void*) &sprite, SPRITE);
+void add_sprite(t_game_data *data, t_sprite sprite) {
+    data->max_id = sprite.spr_id = data->max_id + 1;
+    data->num_sprites++;
+    hashtable_add(data->sprites, (void*) &sprite, SPRITE);
 }
 
-void del_sprite(t_game_data data, int id) {
-    hashtable_del(data.sprites, id);
-    data.num_sprites--;
+void del_sprite(t_game_data *data, int id) {
+    hashtable_del(data->sprites, id);
+    data->num_sprites--;
 }
 
-int *get_sprite_ids(t_game_data data) {
-    return hashtable_get_ids(data.sprites);
+int *get_sprite_ids(t_game_data *data) {
+    return hashtable_get_ids(data->sprites);
 }
 
-t_sound *get_sound(t_game_data data, int id) {
-    return (t_sound *) hashtable_get(data.sounds, id);
+t_sound *get_sound(t_game_data *data, int id) {
+    return (t_sound *) hashtable_get(data->sounds, id);
 }
 
-void add_sound(t_game_data data, t_sound sound) {
-    data.max_id = sound.snd_id = data.max_id + 1;
-    data.num_sounds++;
-    hashtable_add(data.sounds, (void*) &sound, SOUND);
+void add_sound(t_game_data *data, t_sound sound) {
+    data->max_id = sound.snd_id = data->max_id + 1;
+    data->num_sounds++;
+    hashtable_add(data->sounds, (void*) &sound, SOUND);
 }
 
-void del_sound(t_game_data data, int id) {
-    hashtable_del(data.sounds, id);
-    data.num_sounds--;
+void del_sound(t_game_data *data, int id) {
+    hashtable_del(data->sounds, id);
+    data->num_sounds--;
 }
 
-int *get_sound_ids(t_game_data data) {
-    return hashtable_get_ids(data.sounds);
+int *get_sound_ids(t_game_data *data) {
+    return hashtable_get_ids(data->sounds);
 }
 
-int get_num_ids(t_game_data data) {
-    return data.num_entities + data.num_rooms + data.num_sprites + data.num_sounds;
+int get_num_ids(t_game_data *data) {
+    return data->num_entities + data->num_rooms + data->num_sprites + data->num_sounds;
 }
 
-int *get_ids(t_game_data data) {
+int *get_ids(t_game_data *data) {
     int *id_arrays[4] = {
             get_entity_ids(data), get_room_ids(data),
             get_sound_ids(data), get_sprite_ids(data)
     };
     int lengths[4] = {
-            data.num_entities, data.num_rooms,
-            data.num_sounds, data.num_sprites
+            data->num_entities, data->num_rooms,
+            data->num_sounds, data->num_sprites
     };
     int *ids = malloc(sizeof(int)*get_num_ids(data));
     int index = 0;
@@ -320,7 +320,7 @@ int loop_update(t_game_data* data) {
         for (int i = 0; i < current_room.num_entities; i++) {
             int current_entity_id = current_room.entity_ids[i];
             // TODO: cache all entities in current room
-            t_entity *current_entity = get_entity(*data, current_entity_id);
+            t_entity *current_entity = get_entity(data, current_entity_id);
             if (hashtable_contains(data->entities, current_entity_id)) {
                 commands[i] = (*current_entity).update_self(&current_room, current_entity);
             }

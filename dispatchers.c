@@ -12,7 +12,7 @@
 
 
 void cmd_alter_entity(t_game_data *data, struct alter_entity_command cmd) {
-    t_entity *target_entity = get_entity(*data, cmd.target_id);
+    t_entity *target_entity = get_entity(data, cmd.target_id);
     // TODO: acquire lock on linked list, modify, then release
     switch(cmd.modified_attr) {
         case CURRENT_SPR:
