@@ -34,6 +34,59 @@ typedef struct update_command_container t_update_command_container;
 // All struct definitions
 
 /*
+ * room: Contains a screen's worth of entities, eg. a pause menu or a level.
+ * Only one room is focused on at a time, and its entities are all updated each frame.
+ * All of a room's entities are also rendered in the render loop.
+ * Coordinates are relative to the top-left corner of the room; entities can leave this area.
+ */
+struct room {
+    int room_id;
+    int* entity_ids; // IDs of all entities inside of room
+    int num_entities;
+    int width;
+    int height;
+};
+
+/*
+ * sprite: A series of subimages to be rendered one after another on screen at a position.
+ * Has an array of subimages, an x-y position, a number of frames between each subimage, a number of subimages
+ * and a current subimage index.
+ */
+struct sprite {
+    int spr_id;
+    int x;
+    int y;
+    int period; // Number of frames between each image, if -1 then static
+    int current_img;    // Index of current subimage starting at 0
+    int num_imgs;       // Number of subimages.
+    int last_subimg_time;   // Number of rames since last subimage.
+    GLuint* texture;    // Array of subimage textures
+};
+
+/*
+ * entity: An atomic element of a room that independently updates.
+ * Has a unique ID, an update_self function that is called each update of the game, and a position.
+ */
+struct entity {
+    int id; // Unique identifier for an entity.
+    t_update_command_container (*update_self)(t_room*, t_entity*);
+    t_sprite current_spr;
+    int x;
+    int y;
+    void *ent_data; // can be used by entity, must be cast to a meaningful struct first
+};
+
+/*
+ * sound: A single sound to play, eg. a music track or a sound effect.
+ * Contains a file path to a sound and a volume from 0 to a positive value.
+ */
+struct sound {
+    int snd_id;
+    char* snd_path;
+    int volume;
+};
+
+/*
  * game_data: Contains all data about a particular game.
  * Includes all rooms, sprites and sounds, screen size, current room, etc.
  * Is updated each frame by update().
@@ -58,66 +111,6 @@ struct game_data {
     int max_id;
 };
 
-/*
- * room: Contains a screen's worth of entities, eg. a pause menu or a level.
- * Only one room is focused on at a time, and its entities are all updated each frame.
- * All of a room's entities are also rendered in the render loop.
- * Coordinates are relative to the top-left corner of the room; entities can leave this area.
- */
-struct room {
-    int room_id;
-    int* entity_ids; // IDs of all entities inside of room
-    int num_entities;
-    int width;
-    int height;
-};
-
-/*
- * entity: An atomic element of a room that independently updates.
- * Has a unique ID, an update_self function that is called each update of the game, and a position.
- */
-struct entity {
-    int id; // Unique identifier for an entity.
-    t_update_command_container (*update_self)(t_room*, t_entity*);
-    t_sprite current_spr;
-    int x;
-    int y;
-    void *ent_data; // can be used by entity, must be cast to a meaningful struct first
-};
-
-/*
- * sprite: A series of subimages to be rendered one after another on screen at a position.
- * Has an array of subimages, an x-y position, a number of frames between each subimage, a number of subimages
- * and a current subimage index.
- */
-struct sprite {
-    int spr_id;
-    int x;
-    int y;
-    int period; // Number of frames between each image, if -1 then static
-    int current_img;    // Index of current subimage starting at 0
-    int num_imgs;       // Number of subimages.
-    int last_subimg_time;   // Number of rames since last subimage.
-    GLuint* texture;    // Array of subimage textures
-};
-
-/*
- * sound: A single sound to play, eg. a music track or a sound effect.
- * Contains a file path to a sound and a volume from 0 to a positive value.
- */
-struct sound {
-    int snd_id;
-    char* snd_path;
-    int volume;
-};
-
-/*
- * update_command: A request to alter the game's global state.
- * Returned by entities upon running their update_self() functions, and parsed by the global update().
- * Will update variables or flags in game_data.
- * Contains its command_type and a command-specific list of values.
- */
-
 // Type of command.
 enum command_type {
     ALTER_ENTITY,
@@ -130,6 +123,13 @@ enum command_type {
     END_SND,
     QUIT
 };
+
+/*
+ * update_command: A request to alter the game's global state.
+ * Returned by entities upon running their update_self() functions, and parsed by the global update().
+ * Will update variables or flags in game_data.
+ * Contains its command_type and a command-specific list of values.
+ */
 
 // All data types for details of specific commands.
 enum alter_entity_attr {
