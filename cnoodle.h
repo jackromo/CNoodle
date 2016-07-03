@@ -21,7 +21,6 @@ struct sound;
 struct update_command;
 struct update_command_container;
 
-// TODO: remove t_
 typedef struct game_data t_game_data;
 typedef struct entity t_entity;
 typedef struct room t_room;
@@ -29,6 +28,8 @@ typedef struct sprite t_sprite;
 typedef struct sound t_sound;
 typedef struct update_command t_update_command;
 typedef struct update_command_container t_update_command_container;
+
+#include "cnd_gamedata.h"
 
 // All struct definitions
 
@@ -44,16 +45,17 @@ struct game_data {
      * Must remain sorted by ID.
      */
     int num_entities;
-    t_entity* entities;
+    hashtable entities;
     int num_rooms;
-    t_room* rooms;
+    hashtable rooms;
     int num_sprites;
-    t_sprite* sprites;
+    hashtable sprites;
     int num_sounds;
-    t_sound* sounds;
+    hashtable sounds;
     int scr_width;
     int scr_height;
     t_room current_room;
+    int max_id;
 };
 
 /*
@@ -89,6 +91,7 @@ struct entity {
  * and a current subimage index.
  */
 struct sprite {
+    int spr_id;
     int x;
     int y;
     int period; // Number of frames between each image, if -1 then static
@@ -193,8 +196,6 @@ struct update_command_container {
     t_update_command* commands;
 };
 
-// Function declarations
-
 // All update command dispatcher functions
 void cmd_alter_entity(t_game_data*, struct alter_entity_command);
 void cmd_add_entity(t_game_data*, struct add_entity_command);
@@ -205,12 +206,5 @@ void cmd_play_sound(t_game_data*, struct play_sound_command);
 void cmd_pause_sound(t_game_data*, struct pause_sound_command);
 void cmd_end_sound(t_game_data*, struct end_sound_command);
 void cmd_quit(t_game_data*, struct quit_command);
-
-typedef int (*id_func)(void *);
-void* binary_search(void**, int*, int, int, id_func);
-
-int loop_update(t_game_data*);
-int loop_render(t_game_data*);
-int render(t_game_data*);
 
 #endif //CNOODLE_H
