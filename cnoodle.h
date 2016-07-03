@@ -111,31 +111,6 @@ struct game_data {
     int max_id;
 };
 
-/*
- * game_data: Contains all data about a particular game.
- * Includes all rooms, sprites and sounds, screen size, current room, etc.
- * Is updated each frame by update().
- */
-struct game_data {
-    /*
-     * entities: Array of all entities in game.
-     * Only place where entities can be directly referenced.
-     * Must remain sorted by ID.
-     */
-    int num_entities;
-    hashtable entities;
-    int num_rooms;
-    hashtable rooms;
-    int num_sprites;
-    hashtable sprites;
-    int num_sounds;
-    hashtable sounds;
-    int scr_width;
-    int scr_height;
-    t_room current_room;
-    int max_id;
-};
-
 // Type of command.
 enum command_type {
     ALTER_ENTITY,
