@@ -50,18 +50,23 @@ llist_node get_node(llist_node* start, int id) {
             current_node = current_node->next;
         }
     }
-    return NULL;
+    return *start;
 }
 
-void add_node(llist_node* start, llist_node new_node) {
-    llist_node first_node = *start;
-    *start = new_node;
-    *(new_node.next) = (&first_node != NULL) ? first_node : NULL;
+void add_node(llist_node** start, llist_node new_node) {
+    llist_node *first_node = *start;
+    *start = &new_node;
+    new_node.next = (first_node != NULL) ? first_node : NULL;
 }
 
-void del_node(llist_node* start, int id) {
-    llist_node* current_node = start->next;
-    llist_node* prev_node = start;
+void del_node(llist_node** start, int id) {
+    llist_node* current_node = (*start)->next;
+    llist_node* prev_node = *start;
+    if(get_llist_node_id(*prev_node) == id) {
+        *start = current_node;
+        free(prev_node);
+        return;
+    }
     while(current_node != NULL) {
         if(get_llist_node_id(*current_node) == id) {
             prev_node->next = current_node->next;
@@ -98,7 +103,7 @@ int llist_get_length(llist_node* start) {
 int *llist_get_all_ids(llist_node* start) {
     llist_node* current_node = start;
     int *ids = malloc(sizeof(int)*llist_get_length(start));
-    if(ids == NULL) return NULL;
+    if(ids == NULL) exit(EXIT_FAILURE);
     for(int i=0; current_node->next != NULL; i++) {
         ids[i] = get_id(current_node->elem, current_node->type);
         current_node = current_node->next;
@@ -106,20 +111,12 @@ int *llist_get_all_ids(llist_node* start) {
     return ids;
 }
 
-/*
- * hashtable: Table of linked lists. Indexes elements by ID.
- */
-typedef struct {
-    int num_elems;  // number of linked lists in hashtable
-    llist_node** list;
-} hashtable;
-
 hashtable make_hashtable(int num_elems) {
     hashtable table;
     llist_node** list = (llist_node**) malloc(sizeof(llist_node*)*num_elems);
     if(list == NULL) {
         perror("Could not allocate list for hashtable.");
-        return NULL;
+        exit(EXIT_FAILURE);
     }
     table.list = list;
     table.num_elems = num_elems;
@@ -133,17 +130,17 @@ int hash(int id, hashtable table) {
 void hashtable_add(hashtable table, void* elem, elem_type type) {
     llist_node elem_node = make_node(elem, type);
     int entry_pos = hash(get_id(elem, type), table);
-    add_node(table.list[entry_pos], elem_node);
+    add_node(&table.list[entry_pos], elem_node);
 }
 
-void* hashtable_get(hashtable table, int id) {
+void *hashtable_get(hashtable table, int id) {
     int entry_pos = hash(id, table);
     return get_node(table.list[entry_pos], id).elem;
 }
 
 void hashtable_del(hashtable table, int id) {
     int entry_pos = hash(id, table);
-    del_node(table.list[entry_pos], id);
+    del_node(&table.list[entry_pos], id);
 }
 
 bool hashtable_contains(hashtable table, int id) {
@@ -156,17 +153,18 @@ bool hashtable_contains(hashtable table, int id) {
 
 int *hashtable_get_ids(hashtable table) {
     int **id_arrays = (int **) malloc(sizeof(int*)*table.num_elems);
-    if(id_arrays == NULL) return NULL;
+    if(id_arrays == NULL) exit(EXIT_FAILURE);
     int lengths[table.num_elems];
     int sum_lengths = 0;
     for(int i = 0; i < table.num_elems; i++) {
         lengths[i] = llist_get_length(table.list[i]);
         sum_lengths += lengths[i];
         id_arrays[i] = (int *) malloc(sizeof(int)*lengths[i]);
-        if(id_arrays[i] == NULL) return NULL;
+        if(id_arrays[i] == NULL) exit(EXIT_FAILURE);
         id_arrays[i] = llist_get_all_ids(table.list[i]);
     }
     int *ids = (int *) malloc(sizeof(int)*sum_lengths);
+    if(ids == NULL) exit(EXIT_FAILURE);
     int index = 0;
     for(int i = 0; i < table.num_elems; i++) {
         for(int j = 0; j < lengths[i]; j++) {
@@ -200,7 +198,6 @@ t_game_data make_game_data(char* fname) {
     data.num_sprites = 0;
     data.sprites = make_hashtable(num_hashtable_entries);
     data.scr_width = data.scr_height = 400;     // temp value
-    data.current_room = NULL;
     return data;
 }
 
