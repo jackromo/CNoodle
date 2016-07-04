@@ -321,10 +321,10 @@ int loop_update(t_game_data* data) {
             int current_entity_id = current_room->entity_ids[i];
             // TODO: cache all entities in current room
             t_entity *current_entity = get_entity(data, current_entity_id);
-            if (hashtable_contains(data->entities, current_entity_id)) {
+            if (hashtable_contains(data->entities, current_entity_id))
                 commands[i] = (*current_entity).update_self(current_room, current_entity);
-            }
         }
+        // TODO: schedule commands properly, adds first, then alters, then removes, finally quit
         // Parse all commands
         // (must be done in a separate loop bc. may modify other entities before they update)
         // TODO: multithreading with thread pool

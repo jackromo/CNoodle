@@ -9,9 +9,11 @@
  */
 
 #include <stdlib.h>
+#include <stdbool.h>
 #include "cnoodle.h"
 
 // TODO: acquire lock on needed data, modify, then release
+// only hold one lock at a time
 
 void cmd_alter_entity(t_game_data *data, struct alter_entity_command cmd) {
     t_entity *target_entity = get_entity(data, cmd.target_id);
@@ -42,7 +44,22 @@ void cmd_add_entity(t_game_data *data, struct add_entity_command cmd) {
 
 void cmd_rem_entity(t_game_data *data, struct rem_entity_command cmd) {
     del_entity(data, cmd.ent_id);
-    // TODO: remove entity id from rooms
+    // remove entity id from rooms
+    int *room_ids = get_room_ids(data);
+    for(int i = 0; i < data->num_rooms; i++) {
+        t_room *room = get_room(data, room_ids[i]);
+        bool shifting_ids = false;
+        for(int j = 0; j < room->num_entities; j++) {
+            if(room->entity_ids[j] == cmd.ent_id) {
+                free(room->entity_ids + j);
+                shifting_ids = true;
+            } else if(shifting_ids && j < room->num_entities-1) {
+                room->entity_ids[j] = room->entity_ids[j+1];
+            }
+        }
+        room->num_entities--;
+        free(room->entity_ids + room->num_entities - 1);    // last element is empty bc. length decremented
+    }
 }
 
 void cmd_alter_room(t_game_data *data, struct alter_room_command cmd) {
@@ -51,7 +68,7 @@ void cmd_alter_room(t_game_data *data, struct alter_room_command cmd) {
     int model_num_ents = cmd.model_room.num_entities;
     switch(cmd.modified_attr) {
         case ENTITIES:
-            //free old entity ids, make sure not freeing ids intersecting with new entity ids
+            // free old entity ids, make sure not freeing ids intersecting with new entity ids
             for(int *i = room->entity_ids;
                     i < model_ent_ids && i < (room->entity_ids + room->num_entities);
                     i++)
