@@ -313,22 +313,22 @@ int *get_ids(t_game_data *data) {
 int loop_update(t_game_data* data) {
     bool has_game_ended = false;
     while(!has_game_ended) {
-        t_room current_room = data->current_room;
-        t_update_command_container commands[current_room.num_entities];   // FIXME: memory allocation, too slow
+        t_room *current_room = data->current_room;
+        t_update_command_container commands[current_room->num_entities];   // FIXME: memory allocation, too slow
         // Get all update commands
         // TODO: thread pool, currently takes O(n*log(num_entities_overall) + update_self_time) time
-        for (int i = 0; i < current_room.num_entities; i++) {
-            int current_entity_id = current_room.entity_ids[i];
+        for (int i = 0; i < current_room->num_entities; i++) {
+            int current_entity_id = current_room->entity_ids[i];
             // TODO: cache all entities in current room
             t_entity *current_entity = get_entity(data, current_entity_id);
             if (hashtable_contains(data->entities, current_entity_id)) {
-                commands[i] = (*current_entity).update_self(&current_room, current_entity);
+                commands[i] = (*current_entity).update_self(current_room, current_entity);
             }
         }
         // Parse all commands
         // (must be done in a separate loop bc. may modify other entities before they update)
         // TODO: multithreading with thread pool
-        for (int i = current_room.num_entities - 1; i > 0; i--) {
+        for (int i = current_room->num_entities - 1; i > 0; i--) {
             t_update_command_container current_commands = commands[i];
             for (int j = 0; j < current_commands.num_commands; j++) {
                 t_update_command command = current_commands.commands[j];

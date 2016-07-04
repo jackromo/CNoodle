@@ -107,7 +107,7 @@ struct game_data {
     hashtable sounds;
     int scr_width;
     int scr_height;
-    t_room current_room;
+    t_room *current_room;
     int max_id;
 };
 
