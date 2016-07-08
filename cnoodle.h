@@ -8,7 +8,6 @@
 
 #include <GL/gl.h>
 #include <portaudio.h>
-#include <GL/gl.h>
 
 #ifndef CNOODLE_H
 #define CNOODLE_H
