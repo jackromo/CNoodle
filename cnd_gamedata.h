@@ -1,37 +1,13 @@
-//
-// Created by sharr_000 on 7/3/2016.
-//
-
-#ifndef CNOODLE_CND_GAMEDATA_H
-#define CNOODLE_CND_GAMEDATA_H
-
-struct str_llist_node;
-typedef struct str_llist_node llist_node;
-
-typedef enum {
-    ENTITY,
-    SOUND,
-    ROOM,
-    SPRITE
-} elem_type;
-
 /*
- * llist_node: Node in a linked list.
+ * File: cnd_gamedata.h
+ *
+ * Header for all game data function declarations.
+ *
+ * Author: Jack Romo <sharrackor@gmail.com>
  */
-struct str_llist_node {
-    llist_node* next;
-    elem_type type;
-    void* elem;
-};
 
-/*
- * hashtable: Table of linked lists. Indexes elements by ID.
- */
-typedef struct {
-    int num_elems;  // number of linked lists in hashtable
-    llist_node** list;  // all linked lists
-    // when multithreading added, put lock for each linked list
-} hashtable;
+#ifndef CND_GAMEDATA_H
+#define CND_GAMEDATA_H
 
 t_game_data make_game_data(char *);
 
@@ -64,4 +40,4 @@ int *get_ids(t_game_data *);
 int loop_update(t_game_data *);
 int loop_render(t_game_data *);
 
-#endif //CNOODLE_CND_GAMEDATA_H
+#endif //CND_GAMEDATA_H
