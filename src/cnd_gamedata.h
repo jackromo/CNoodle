@@ -37,6 +37,8 @@ int *get_sound_ids(t_game_data *);
 
 int *get_ids(t_game_data *);
 
+void gamedata_free(t_game_data *);
+
 int loop_update(t_game_data *);
 int loop_render(t_game_data *);
 

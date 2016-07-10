@@ -19,7 +19,9 @@ struct sprite;
 struct sound;
 struct update_command;
 struct update_command_container;
+struct str_llist_node;
 
+typedef struct str_llist_node llist_node;
 typedef struct game_data t_game_data;
 typedef struct entity t_entity;
 typedef struct room t_room;
@@ -84,8 +86,6 @@ struct sound {
 
 // All game data types
 
-struct str_llist_node;
-typedef struct str_llist_node llist_node;
 
 typedef enum {
     ENTITY,

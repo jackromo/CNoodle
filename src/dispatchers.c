@@ -109,20 +109,5 @@ void cmd_end_sound(t_game_data *data, struct end_sound_command cmd) {
 }
 
 void cmd_quit(t_game_data *data, struct quit_command cmd) {
-    // cleanup code, delete everything
-    int *room_ids = get_room_ids(data);
-    for(int i = 0; i < data->num_rooms; i++)
-        free(get_room(data, room_ids[i]));
-
-    int *entity_ids = get_entity_ids(data);
-    for(int i = 0; i < data->num_entities; i++)
-        free(get_entity(data, entity_ids[i]));
-
-    int *sprite_ids = get_sprite_ids(data);
-    for(int i = 0; i < data->num_sprites; i++)
-        free(get_sprite(data, sprite_ids[i]));
-
-    int *sound_ids = get_sound_ids(data);
-    for(int i = 0; i < data->num_sounds; i++)
-        free(get_sound(data, sound_ids[i]));
+    gamedata_free(data);
 }

@@ -70,6 +70,7 @@ void del_node(llist_node** start, int id) {
     while(current_node != NULL) {
         if(get_llist_node_id(*current_node) == id) {
             prev_node->next = current_node->next;
+            // FIXME: some nodes contain elems with pointers, need more refined delete
             free(current_node);
             return;
         } else {
@@ -109,6 +110,12 @@ int *llist_get_all_ids(llist_node* start) {
         current_node = current_node->next;
     }
     return ids;
+}
+
+void llist_free(llist_node *start) {
+    while(start != NULL) {
+        del_node(&start, get_llist_node_id(*start));
+    }
 }
 
 hashtable make_hashtable(int num_elems) {
@@ -181,6 +188,12 @@ int hashtable_get_num_entries(hashtable table) {
         length += llist_get_length(table.list[i]);
     }
     return length;
+}
+
+void hashtable_free(hashtable table) {
+    for(int i = 0; i < table.num_elems; i++) {
+        llist_free(table.list[i]);
+    }
 }
 
 // game data
@@ -297,6 +310,14 @@ int *get_ids(t_game_data *data) {
             ids[index] = id_arrays[i][j];
     }
     return ids;
+}
+
+void gamedata_free(t_game_data *data) {
+    hashtable_free(data->rooms);
+    hashtable_free(data->entities);
+    hashtable_free(data->sprites);
+    hashtable_free(data->sounds);
+    free(data);
 }
 
 /*
