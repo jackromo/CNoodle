@@ -1,13 +1,41 @@
 /*
  * File: cnd_gamedata.h
  *
- * Header for all game data function declarations.
+ * Header for all game data declarations.
  *
  * Author: Jack Romo <sharrackor@gmail.com>
  */
 
 #ifndef CND_GAMEDATA_H
 #define CND_GAMEDATA_H
+
+#include "cnd_datatypes.h"
+#include "cnd_hashtable.h"
+
+/*
+ * game_data: Contains all data about a particular game.
+ * Includes all rooms, sprites and sounds, screen size, current room, etc.
+ * Is updated each frame by update().
+ */
+struct game_data {
+    /*
+     * entities: Array of all entities in game.
+     * Only place where entities can be directly referenced.
+     * Must remain sorted by ID.
+     */
+    int num_entities;
+    hashtable entities;
+    int num_rooms;
+    hashtable rooms;
+    int num_sprites;
+    hashtable sprites;
+    int num_sounds;
+    hashtable sounds;
+    int scr_width;
+    int scr_height;
+    t_room *current_room;
+    int max_id;
+};
 
 t_game_data make_game_data(char *);
 

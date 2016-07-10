@@ -13,7 +13,7 @@
 #define CNOODLE_H
 
 #include "cnd_datatypes.h"    // all data types
-#include "cnd_gamedata.h"     // all game data functions
+#include "cnd_gamedata.h"     // game data
 #include "cnd_commands.h"  // all update commands and dispatchers
 
 #endif //CNOODLE_H
