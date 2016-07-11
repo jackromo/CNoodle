@@ -91,7 +91,7 @@ struct sound {
     int volume;
 };
 
-t_sound make_sound(int, char*, int);
+t_sound make_sound(char*, int);
 void free_sound(t_sound *);
 void play_sound(t_sound *);
 void pause_sound(t_sound *);
