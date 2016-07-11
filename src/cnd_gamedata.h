@@ -21,7 +21,6 @@ struct game_data {
     /*
      * entities: Array of all entities in game.
      * Only place where entities can be directly referenced.
-     * Must remain sorted by ID.
      */
     int num_entities;
     hashtable entities;

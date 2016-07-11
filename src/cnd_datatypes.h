@@ -43,7 +43,7 @@ struct room {
     int height;
 };
 
-t_room make_room(int, int*, int, int, int);
+t_room make_room(int*, int, int, int);
 void free_room(t_room *);
 
 /*
@@ -53,16 +53,12 @@ void free_room(t_room *);
  */
 struct sprite {
     int spr_id;
-    int x;
-    int y;
     int period; // Number of frames between each image, if -1 then static
-    int current_img;    // Index of current subimage starting at 0
     int num_imgs;       // Number of subimages.
-    int last_subimg_time;   // Number of rames since last subimage.
     GLuint* texture;    // Array of subimage textures
 };
 
-t_sprite make_sprite(int, int, int, int, int, int, int, GLuint*);
+t_sprite make_sprite(int, int, GLuint*);
 void free_sprite(t_sprite *);
 void draw_sprite(t_sprite * /* add args needed when rendering finished */);
 
@@ -73,15 +69,17 @@ void draw_sprite(t_sprite * /* add args needed when rendering finished */);
 struct entity {
     int id; // Unique identifier for an entity.
     t_update_command_container (*update_self)(t_room*, t_entity*);
-    t_sprite current_spr;
+    int current_spr_id;
+    int current_img;    // Index of current sprite subimage starting at 0
+    int last_subimg_time;   // Number of frames since last sprite subimage.
     int x;
     int y;
     void *ent_data; // can be used by entity, must be cast to a meaningful struct first
 };
 
-t_entity make_entity();
+t_entity make_entity(/* TODO */);
 void free_entity(t_entity *);
-t_update_command_container update_entity(t_entity *); // TODO: deprecate update_self in favor of table of callbacks
+t_update_command_container update_entity(t_entity *); // TODO: deprecate update_self in favor of vtable of callbacks
 
 /*
  * sound: A single sound to play, eg. a music track or a sound effect.
