@@ -10,7 +10,7 @@ CNoodle is an open source library for 2D game development in C.
 An example project is shown here.
 
 File structure:
-
+```
 /project
     main.c
     /images
@@ -19,10 +19,11 @@ File structure:
     /sound
         main_theme.png
         player_jump.png
+```
 
 main.c:
-
- #include "cnoodle.h"
+```
+#include "cnoodle.h"
 
 int main() {
     // make central game data struct
@@ -32,6 +33,7 @@ int main() {
     // now run the game
     cnd_run(data);
 }
+```
 
 The main.c file should be compiled with all of CNoodle's dependencies
 and then run in the same directory it was compiled at.
