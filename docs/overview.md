@@ -28,8 +28,11 @@ main.c:
 int main() {
     // make central game data struct
     cnd_game_data data = cnd_make_game_data();
-    // add entities, sprites and sound here, eg.
+    // add entities, sprites, rooms and sound here, eg.
     cnd_sprite player_idle_sprite = cnd_make_sprite("./images/player_idle.png");
+    cnd_add_sprite(&data, game_idle_sprite);
+    cnd_room main_room = cnd_make_room(...);
+    cnd_add_room(&data, main_room);
     // now run the game
     cnd_run(data);
 }

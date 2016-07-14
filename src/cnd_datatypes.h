@@ -53,14 +53,28 @@ void free_room(t_room *);
  */
 struct sprite {
     int spr_id;
-    int period; // Number of frames between each image, if -1 then static
     int num_imgs;       // Number of subimages.
     GLuint* texture;    // Array of subimage textures
 };
 
-t_sprite make_sprite(int, int, GLuint*);
+t_sprite make_sprite(int, GLuint*);
 void free_sprite(t_sprite *);
 void draw_sprite(t_sprite * /* add args needed when rendering finished */);
+
+
+/*
+ * ent_func_vtable: A vtable of every function that an entity needs.
+ * All functions are used as event handlers, eg. init() is called on an entity's first update.
+ */
+typedef struct {
+    t_update_command_container (*init)(t_game_data*, t_entity*);
+    t_update_command_container (*step)(t_game_data*, t_entity*);
+    t_update_command_container (*destroy)(t_game_data*, t_entity*);
+    t_update_command_container (*collide)(t_game_data*, t_entity*, int);
+    t_update_command_container (*key_pressed)(t_game_data*, t_entity* /* TODO */);
+    t_update_command_container (*draw_begin)(t_game_data*, t_entity*);
+    t_update_command_container (*draw_end)(t_game_data*, t_entity*);
+} ent_func_vtable;
 
 /*
  * entity: An atomic element of a room that independently updates.
@@ -68,18 +82,19 @@ void draw_sprite(t_sprite * /* add args needed when rendering finished */);
  */
 struct entity {
     int id; // Unique identifier for an entity.
-    t_update_command_container (*update_self)(t_room*, t_entity*);
+    ent_func_vtable event_handlers;     // Vtable of event handler functions.
     int current_spr_id;
-    int current_img;    // Index of current sprite subimage starting at 0
-    int last_subimg_time;   // Number of frames since last sprite subimage.
+    int spr_period;     // Number of frames between each sprite subimage, if -1 then static
+    int spr_current_img;    // Index of current sprite subimage starting at 0
+    int spr_last_subimg_time;   // Number of frames since last sprite subimage.
     int x;
     int y;
     void *ent_data; // can be used by entity, must be cast to a meaningful struct first
 };
 
-t_entity make_entity(/* TODO */);
+t_entity make_entity(int, int, int, void *);
 void free_entity(t_entity *);
-t_update_command_container update_entity(t_entity *); // TODO: deprecate update_self in favor of vtable of callbacks
+t_update_command_container update_entity(t_game_data*, t_entity *); // TODO: deprecate update_self in favor of vtable of callbacks
 
 /*
  * sound: A single sound to play, eg. a music track or a sound effect.
