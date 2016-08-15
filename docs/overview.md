@@ -126,7 +126,8 @@ thread safe.
 In an update, each entity is checked along certain criteria, to decide
 whether to call each event handler function or not on that update. Each
 update function will return a series of update commands, which are all
-returned together by the entity.
+returned together by the entity. The update will also give an update
+command to update the entity's current sprite if appropriate.
 
 (NB: Each entity is fed a pointer to the main game data struct; this can
 be read safely without locks, but the struct must not be written to!)
@@ -141,18 +142,20 @@ nothing if it is being removed in the same update.
 
 ### Render
 
-In the render loop, CNoodle will get references to every entity in the
-current room, and gather their respective sprites along with info from
-the entity pertaining to how to render itself, eg. which frame to show.
+In the render loop, CNoodle will gather the IDs of all the entities in
+the current room and extract their rendered textures from their sprites.
+As it does this to each entity, it will call its respective
+before_render function to see if it wishes to draw anything extra or
+apply any drawing settings before images are drawn to the screen.
 
-After this, the render loop will call the draw_before function of each
-entity. The entity will then draw each sprite to the screen in order of
-depth, offsetting them by the current camera position, paint the image
-to the screen and update the current frame of each entity, acquiring a
-lock on each one to do so.
-
-The render loop will end by calling the draw_after function of each
-entity that was drawn. After this, the render loop repeats.
+Each renderable image is gathered as a queued_image struct, which is
+passed to a balanced binary tree for sorting in order of image depth.
+After finally calling each entity's after_render function, the tree of
+images are traversed in order of smallest to largest depth, drawing each
+image onto the screen buffer one at a time relative to the camera
+position. (Images not on the screen at all are ignored completely.) The
+buffer is then painted to the screen for display, and the render loop
+repeats.
 
 ## Shutdown
 
