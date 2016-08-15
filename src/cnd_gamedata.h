@@ -14,29 +14,50 @@
 
 /*
  * game_data: Contains all data about a particular game.
- * Includes all rooms, sprites and sounds, screen size, current room, etc.
- * Is updated each frame by update().
+ * Includes all entities rooms, sprites and sounds, screen size, current room, etc.
+ * Is updated each frame by update(), and rendered to the screen by render().
  */
 struct game_data {
     /*
-     * entities: Array of all entities in game.
+     * entities: All entities in game.
      * Only place where entities can be directly referenced.
      */
     int num_entities;
     hashtable entities;
+    /*
+     * rooms: All rooms in game.
+     * Only place where rooms can be directly referenced.
+     */
     int num_rooms;
     hashtable rooms;
+    /*
+     * sprites: All sprites in game.
+     * Only place where sprites can be directly referenced.
+     */
     int num_sprites;
     hashtable sprites;
+    /*
+     * sounds: All sounds in game.
+     * Only place where sounds can be directly referenced.
+     */
     int num_sounds;
     hashtable sounds;
-    int scr_width;
+    // All metadata about game.
+    int scr_width;  // Width and height of screen that user sees, in pixels.
     int scr_height;
-    t_room *current_room;
-    int max_id;
+    int camera_x;   // X-Y coordinates of top-left corner of camera in room.
+    int camera_y;
+    int current_room_id;   // ID of current room.
+    int max_id;     // Largest ID ever used.
 };
 
+// Game data interface commands (see gamedata.c for implementation)
+
 t_game_data make_game_data(char *);
+void gamedata_free(t_game_data *);
+
+// Game data element functions (used by dispatchers and entity event handlers)
+// (add_ and del_ functions to be used by dispatchers only)
 
 // entity functions
 t_entity *get_entity(t_game_data *, int);
@@ -63,8 +84,6 @@ void del_sound(t_game_data *, int);
 int *get_sound_ids(t_game_data *);
 
 int *get_ids(t_game_data *);
-
-void gamedata_free(t_game_data *);
 
 int loop_update(t_game_data *);
 int loop_render(t_game_data *);
