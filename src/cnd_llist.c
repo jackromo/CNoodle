@@ -30,6 +30,9 @@ int get_id(void* elem, elem_type type) {
     }
 }
 
+/*
+ * make_node: Create a new llist_node.
+ */
 llist_node make_node(void* elem, elem_type type) {
     llist_node node;
     node.elem = elem;
@@ -38,6 +41,9 @@ llist_node make_node(void* elem, elem_type type) {
     return node;
 }
 
+/*
+ * get_llist_node_id: Get ID contained within a node.
+ */
 int get_llist_node_id(llist_node node) {
     return get_id(node.elem, node.type);
 }
@@ -54,17 +60,24 @@ llist_node get_node(llist_node* start, int id) {
     return *start;
 }
 
+/*
+ * add_node: Add a node to a linked list. Takes pointer to start pointer, as it may be changed.
+ */
 void add_node(llist_node** start, llist_node new_node) {
     llist_node *first_node = *start;
     *start = &new_node;
     new_node.next = (first_node != NULL) ? first_node : NULL;
 }
 
+/*
+ * del_node: Delete and free a node in a linked list.
+ */
 void del_node(llist_node** start, int id) {
     llist_node* current_node = (*start)->next;
     llist_node* prev_node = *start;
     if(get_llist_node_id(*prev_node) == id) {
         *start = current_node;
+        // FIXME: some nodes contain elems with pointers, need more refined delete
         free(prev_node);
         return;
     }
@@ -82,6 +95,9 @@ void del_node(llist_node** start, int id) {
     perror("Could not find node");
 }
 
+/*
+ * llist_contains: Return true if an ID is in llist, false otherwise.
+ */
 bool llist_contains(llist_node* start, int id) {
     llist_node* current_node = start;
     while(current_node->next != NULL) {
@@ -92,6 +108,9 @@ bool llist_contains(llist_node* start, int id) {
     return false;
 }
 
+/*
+ * llist_get_length: Get number of elements in llist, in linear time.
+ */
 int llist_get_length(llist_node* start) {
     llist_node* current_node = start;
     int len = 0;
@@ -102,6 +121,9 @@ int llist_get_length(llist_node* start) {
     return len;
 }
 
+/*
+ * llist_get_all_ids: Get an array of all IDs in a linked list.
+ */
 int *llist_get_all_ids(llist_node* start) {
     llist_node* current_node = start;
     int *ids = malloc(sizeof(int)*llist_get_length(start));
@@ -113,6 +135,9 @@ int *llist_get_all_ids(llist_node* start) {
     return ids;
 }
 
+/*
+ * llist_free: Free all the nodes in the linked list.
+ */
 void llist_free(llist_node *start) {
     while(start != NULL) {
         del_node(&start, get_llist_node_id(*start));
