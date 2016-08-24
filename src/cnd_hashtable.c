@@ -11,6 +11,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <pthread.h>
 
 /*
  * make_hashtable: Create a hashtable.
@@ -21,13 +22,21 @@
  */
 hashtable make_hashtable(int num_elems) {
     hashtable table;
-    llist_node** list = malloc(sizeof(llist_node*)*num_elems);
+    llist_node** list = malloc(sizeof(llist_node*) * num_elems);
     if(list == NULL) {
         perror("Could not allocate list for hashtable.");
         exit(EXIT_FAILURE);
     }
     table.list = list;
     table.num_elems = num_elems;
+    table.mutexes = malloc(sizeof(pthread_mutex_t) * num_elems);
+    if(table.mutexes == NULL) {
+        perror("Could not allocate mutexes for hashtable.");
+        exit(EXIT_FAILURE);
+    }
+    for(int i = 0; i < table.num_elems; i++) {
+        pthread_mutex_init(&table.mutexes[i], NULL);
+    }
     return table;
 }
 
@@ -36,6 +45,30 @@ hashtable make_hashtable(int num_elems) {
  */
 int hash(int id, hashtable table) {
     return id % (table.num_elems);
+}
+
+/*
+ * hashtable_trylock_id: Acquire lock on llist in hashtable responsible for 'id'.
+ * Stall until this is accomplished.
+ */
+void hashtable_lock_id(hashtable table, int id) {
+    pthread_mutex_lock(&table.mutexes[hash(id, table)]);
+}
+
+/*
+ * hashtable_trylock_id: Attempt to acquire lock on llist in hashtable responsible for 'id'.
+ *
+ * Will try once; if fails, will return nonzero value.
+ */
+int hashtable_trylock_id(hashtable table, int id) {
+    return pthread_mutex_trylock(&table.mutexes[hash(id, table)]);
+}
+
+/*
+ * hashtable_unlock_id: Release lock on an ID.
+ */
+void hashtable_unlock_id(hashtable table, int id) {
+    pthread_mutex_unlock(&table.mutexes[hash(id, table)]);
 }
 
 /*
@@ -119,4 +152,5 @@ void hashtable_free(hashtable table) {
     for(int i = 0; i < table.num_elems; i++) {
         llist_free(table.list[i]);
     }
+    free(table.mutexes);
 }

@@ -10,6 +10,8 @@
 #define CND_HASHTABLE_H
 
 #include "cnd_llist.h"
+#include <pthread.h>
+
 
 /*
  * hashtable: Table of linked lists. Indexes elements by ID.
@@ -17,7 +19,7 @@
 typedef struct {
     int num_elems;  // number of linked lists in hashtable
     llist_node** list;  // all linked lists
-    // when multithreading added, put lock for each linked list
+    pthread_mutex_t *mutexes;  // mutexes for each linked list
 } hashtable;
 
 // All hashtable functions (see cnd_hashtable.c)
