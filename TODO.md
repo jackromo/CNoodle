@@ -3,7 +3,7 @@
 ## Features
 
 * Apply concurrency with pthreads
-    * Make thread pool for update / render
+    * Make thread pool for update / render (see ThreadPoolC repo)
     * Add locks to linked lists in hashtables
     * Make acquire_lock / is_locked / release_lock funcs
         * Given an id, get lock for its linked list
@@ -23,6 +23,12 @@
     * Helper functions, hide game_data access
         * Also to auto-generate update commands and container
     * Physics (hitboxes, pixel-perfect collision, hit-circles, etc.)
+* Add tests for everything
+    * use glib unit testing facilities
+    * tests directory, capability to build with tests
+    * ability to choose which tests to run
+* Replace llist with GSList, llist is pointless
+
 
 ## Bugfixes
 
