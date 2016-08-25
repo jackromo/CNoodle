@@ -1,12 +1,12 @@
 /*
- * File: main.c
+ * File: test_demo_game.c
  *
- * Contains main function.
+ * Contains demo game to test all of CNoodle at once.
  *
  * Author: Jack Romo <sharrackor@gmail.com>
  */
 
-#include "cnoodle.h"
+#include "../cnoodle.h"
 
 int main() {
     // TODO: make game data and start up update and render loops

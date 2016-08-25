@@ -112,7 +112,7 @@ struct entity {
 t_entity make_entity(int, int, int, void *);
 void free_entity(t_entity *);
 t_update_command_container update_entity(t_game_data*, t_entity *); // TODO: deprecate update_self in favor of vtable of callbacks
-void draw_entity(t_entity *, /* TODO */);
+void draw_entity(t_entity * /* TODO */);
 
 /*
  * sound: A single sound to play, eg. a music track or a sound effect.
