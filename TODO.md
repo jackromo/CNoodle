@@ -32,4 +32,7 @@
 
 ## Bugfixes
 
-* None yet
+* Fix command dispatchers
+    * Many data types now use IDs rather than values
+    * Elements passed to gamedata by pointer now
+* Test makefile 'test' directive
