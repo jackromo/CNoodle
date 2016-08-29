@@ -31,10 +31,10 @@ t_entity *get_entity(t_game_data *data, int id) {
     return (t_entity *) hashtable_get(data->entities, id);
 }
 
-void add_entity(t_game_data *data, t_entity entity) {
-    data->max_id = entity.id = data->max_id + 1;
+void add_entity(t_game_data *data, t_entity *entity) {
+    data->max_id = entity->id = data->max_id + 1;
     data->num_entities++;
-    hashtable_add(data->entities, (void*) &entity, ENTITY);
+    hashtable_add(data->entities, (void*) entity, ENTITY);
 }
 
 void del_entity(t_game_data *data, int id) {
@@ -50,10 +50,10 @@ t_room *get_room(t_game_data *data, int id) {
     return (t_room *) hashtable_get(data->rooms, id);
 }
 
-void add_room(t_game_data *data, t_room room) {
-    data->max_id = room.room_id = data->max_id + 1;
+void add_room(t_game_data *data, t_room *room) {
+    data->max_id = room->room_id = data->max_id + 1;
     data->num_rooms++;
-    hashtable_add(data->rooms, (void*) &room, ROOM);
+    hashtable_add(data->rooms, (void*) room, ROOM);
 }
 
 void del_room(t_game_data *data, int id) {
@@ -69,10 +69,10 @@ t_sprite *get_sprite(t_game_data *data, int id) {
     return (t_sprite *) hashtable_get(data->sprites, id);
 }
 
-void add_sprite(t_game_data *data, t_sprite sprite) {
-    data->max_id = sprite.spr_id = data->max_id + 1;
+void add_sprite(t_game_data *data, t_sprite *sprite) {
+    data->max_id = sprite->spr_id = data->max_id + 1;
     data->num_sprites++;
-    hashtable_add(data->sprites, (void*) &sprite, SPRITE);
+    hashtable_add(data->sprites, (void*) sprite, SPRITE);
 }
 
 void del_sprite(t_game_data *data, int id) {
@@ -88,8 +88,8 @@ t_sound *get_sound(t_game_data *data, int id) {
     return (t_sound *) hashtable_get(data->sounds, id);
 }
 
-void add_sound(t_game_data *data, t_sound sound) {
-    data->max_id = sound.snd_id = data->max_id + 1;
+void add_sound(t_game_data *data, t_sound *sound) {
+    data->max_id = sound->snd_id = data->max_id + 1;
     data->num_sounds++;
     hashtable_add(data->sounds, (void*) &sound, SOUND);
 }

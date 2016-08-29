@@ -9,12 +9,12 @@
 #include "cnoodle.h"
 #include <stdlib.h>
 
-t_sprite make_sprite(int period, int num_imgs, GLuint *texture) {
-    t_sprite sprite;
-    sprite.spr_id = 0;
-    sprite.period = period;
-    sprite.num_imgs = num_imgs;
-    sprite.texture = texture;
+t_sprite *make_sprite(int period, int num_imgs, GLuint *texture) {
+    t_sprite *sprite;
+    sprite->spr_id = 0;
+    sprite->period = period;
+    sprite->num_imgs = num_imgs;
+    sprite->texture = texture;
     return sprite;
 }
 

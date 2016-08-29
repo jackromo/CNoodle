@@ -47,7 +47,7 @@ struct room {
 
 // Room functions (see rooms.c)
 
-t_room make_room(int*, int, int, int);
+t_room *make_room(int*, int, int, int);
 void free_room(t_room *);
 
 /*
@@ -64,7 +64,7 @@ struct sprite {
 
 // Sprite functions (see sprites.c)
 
-t_sprite make_sprite(int, GLuint*);
+t_sprite *make_sprite(int, GLuint*);
 void free_sprite(t_sprite *);
 void draw_sprite(t_sprite * /* add args needed when rendering finished */);
 
@@ -109,7 +109,7 @@ struct entity {
 
 // Entity functions (see entities.c)
 
-t_entity make_entity(int, int, int, void *);
+t_entity *make_entity(int, int, int, void *);
 void free_entity(t_entity *);
 t_update_command_container update_entity(t_game_data*, t_entity *); // TODO: deprecate update_self in favor of vtable of callbacks
 void draw_entity(t_entity * /* TODO */);
@@ -126,7 +126,7 @@ struct sound {
 
 // Sound functions (see sounds.c)
 
-t_sound make_sound(char*, int);
+t_sound *make_sound(char*, int);
 void free_sound(t_sound *);
 void play_sound(t_sound *);
 void pause_sound(t_sound *);
